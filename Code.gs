@@ -330,38 +330,4 @@ var DocParser = function(doc){
   }
 } // === END Class
 
-  
-//  this.getLinks = function(string){
-//    var unicList = [];
-//    var tagName = "body";
-//    var tagRegExp = "<"+tagName+"(.)*?\/\\s*"+tagName+">";   //<p(.|\\n)*?\/p> // 
-//    
-////    var tagRegExp = "<body[^>]*>(.*?)<\/body>";               //<\s*p[^a]*>(.*?)<\s*\/\s*p>
-//    var regExp = new RegExp(tagRegExp, 'i');
-//    var matches = string.match(regExp);                    // pull all specific tags
-//    Logger.log(matches.length);
-//    
-//    var regExpTagA = new RegExp("<\s*a[^>]*>(.*?)<\\s*\/\\s*a>", 'im'); // <\s*a[^>]*>(.*?)<\s*/\s*a>
-//    var regExpScriptRemov = new RegExp("<script(.|\\n)*?\/\\s*script>", 'gim');
-//   
-//    if(matches != null){                                  // if found any - do...
-////      Logger.log(matches.length);
-//      for(var i = 0; i< matches.length; i++){
-//        var text = '', link = ''; 
-//        
-//        var link = matches[i].match(regExpTagA);               // get <a> tag
-//        var regExpTags = new RegExp("<[^>]*>", 'gim');     // remove extra tags
-//        var regExpLink = new RegExp('.+href="(.*?)"', "im");
-//        
-//        if( link ){
-//          var text = link[0].replace(regExpTags, "").trim();        // remove all tags
-//          var href = link[0].match(regExpLink)[1];
-//          var asin = this.getAsin(href);
-//          unicList.push([ text, asin, href, this.url ]);
-////          Logger.log(href);
-////          Logger.log(asin);
-//        }        
-//      }
-//    }
-//    return unicList;
-//  }
+
