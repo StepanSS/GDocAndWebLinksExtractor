@@ -66,7 +66,7 @@ var UrlScaner = function(sheetSourceName, sheetResName, sheetSettings){
     if(!sourceUrls) { return Logger.log("ERROR in scanEachUrl()") };
     sourceUrls.forEach( function(url, index) {
       var docUrl = ( url.indexOf("//docs.google") > 0 );          // return true if url is GDoc link
-      if(docUrl && !onlyWeb){
+      if( docUrl && !onlyWeb ){
         // Pull data from G Doc 
         var doc = DocumentApp.openByUrl(url);
         var docParser =new DocParser(doc);
@@ -74,14 +74,14 @@ var UrlScaner = function(sheetSourceName, sheetResName, sheetSettings){
         var uniqList = docParser.getUnicLinks(linkList);
         docParser.printData(uniqList, this.sheetResName);
 //        Logger.log(uniqList);
-      }else{
+      }else if( !docUrl ){
         // Pull data from Web
         var webParser = new WebParser(url);
         if(onlyWeb){                                            // 
-          var linkList = webParser.getAllLinks();
+          var linkList = webParser.getLinksByTag(["body"]);
         }else{
-          var tagList = this.getTags();                         // get tags from settings tab
-          Logger.log(tagList);
+          var tagList = this.getTags();                         // get tags from settings sheet ["h1", "p"]
+//          Logger.log(tagList);
           var linkList = webParser.getLinksByTag(tagList);
         }
         webParser.printData(linkList, this.sheetResName);
@@ -147,10 +147,12 @@ var WebParser = function(url){
     $('body a').each(function(i, el){
       var linkText = $(el).text().trim();
       var link = $(el).attr('href');
-      var unic = ( unicLinks.indexOf(link) == -1);
-      if(unic && linkText != ''){
+      var unic = ( unicLinks.indexOf(link) == -1);         // return true if link unic (not found in unikLinks arr)
+      var image = ( linkText.indexOf('<img') == 0);        // return true if linkText contain only image tag
+      if(link && unic && linkText != ''&& !image){
           var asin = self.getAsin(link);
           data.push([linkText, asin, link, siteUrl, tag]);
+          unicLinks.push(link);
       }
     });
 //    Logger.log(data.length);
@@ -180,10 +182,12 @@ var WebParser = function(url){
                         .text()
                         .trim();
             var link = $(elem).attr('href');
-            var unic = ( unicLinks.indexOf(link) == -1);
-            if(unic && linkText != ''){
+            var unic = ( unicLinks.indexOf(link) == -1);         // return true if link unic (not found in unikLinks arr)
+            var image = ( linkText.indexOf('<img') == 0);        // return true if linkText contain only image tag
+            if(link && unic && linkText != ''&& !image){
                 var asin = self.getAsin(link);
                 data.push([linkText, asin, link, siteUrl, tag]);
+                unicLinks.push(link);
             }
         })
     }, this)
@@ -195,6 +199,7 @@ var WebParser = function(url){
   
   // === Helper RegEx get ASIN code from link
   this.getAsin = function(link){
+    if( !link){ return ""; }
 //    var url = "https://www.amazon.com/Roland-DB-90-BOSS-Metronome/B000ATOFS4/ref=sr_1_3?keywords=BOSS+DB-90&qid=1568907205&s=musical-instruments&sr=1-3";
     var amazon = ( link.indexOf("amazon.com") > 0 );
     if(amazon){
